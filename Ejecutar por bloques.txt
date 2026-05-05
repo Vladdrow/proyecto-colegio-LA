@@ -1,0 +1,193 @@
+############################################################3
+git clone https://github.com/Vladdrow/proyecto-colegio-LA
+cd proyecto-colegio-LA
+
+docker-compose build
+docker-compose up -d
+
+
+
+docker-compose exec -u root php sh -c 'cat > /var/www/html/.env << "EOF"
+APP_NAME=Laravel
+APP_ENV=local
+APP_KEY=
+APP_DEBUG=true
+APP_URL=http://localhost:8081
+
+APP_LOCALE=en
+APP_FALLBACK_LOCALE=en
+APP_FAKER_LOCALE=en_US
+
+APP_MAINTENANCE_DRIVER=file
+APP_MAINTENANCE_STORE=database
+
+BCRYPT_ROUNDS=12
+
+LOG_CHANNEL=stack
+LOG_STACK=single
+LOG_DEPRECATIONS_CHANNEL=null
+LOG_LEVEL=debug
+
+DB_CONNECTION=pgsql
+DB_HOST=postgres
+DB_PORT=5432
+DB_DATABASE=colegio_los_angeles
+DB_USERNAME=user1
+DB_PASSWORD=user1.pa55
+
+SESSION_DRIVER=database
+SESSION_LIFETIME=120
+SESSION_ENCRYPT=false
+SESSION_PATH=/
+SESSION_DOMAIN=null
+
+BROADCAST_CONNECTION=log
+FILESYSTEM_DISK=local
+QUEUE_CONNECTION=database
+
+CACHE_STORE=database
+
+MEMCACHED_HOST=127.0.0.1
+
+REDIS_CLIENT=phpredis
+REDIS_HOST=127.0.0.1
+REDIS_PASSWORD=null
+REDIS_PORT=6379
+
+MAIL_MAILER=log
+MAIL_SCHEME=null
+MAIL_HOST=127.0.0.1
+MAIL_PORT=2525
+MAIL_USERNAME=null
+MAIL_PASSWORD=null
+MAIL_FROM_ADDRESS="hello@example.com"
+MAIL_FROM_NAME="${APP_NAME}"
+
+AWS_ACCESS_KEY_ID=
+AWS_SECRET_ACCESS_KEY=
+AWS_DEFAULT_REGION=us-east-1
+AWS_BUCKET=
+AWS_USE_PATH_STYLE_ENDPOINT=false
+
+VITE_APP_NAME="${APP_NAME}"
+EOF'
+
+#########################################################################
+
+docker-compose exec -u root php sh
+
+#######################################################
+# dentro de php
+cd /tmp
+php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
+php composer-setup.php --install-dir=/usr/local/bin --filename=composer
+exit
+
+################################################3
+docker-compose exec -u root php sh -c "mkdir -p /var/www/html/bootstrap/cache && chmod -R 775 /var/www/html/bootstrap/cache && chown -R laravel:laravel /var/www/html/bootstrap/cache"
+
+docker-compose exec -u root php sh -c "chown -R laravel:laravel /var/www/html && chmod -R 755 /var/www/html && chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache && chmod 664 /var/www/html/.env"
+
+docker-compose exec -u root php composer install
+
+docker-compose exec -u root php composer require laravel/sanctum
+
+docker-compose exec -u root php php artisan key:generate
+
+docker-compose exec -u root php php artisan migrate
+
+#######################################################
+
+docker cp src/database/colegio_pg.sql api_postgres:/tmp/colegio_pg.sql
+
+docker-compose exec postgres psql -U user1 -d colegio_los_angeles -f /tmp/colegio_pg.sql
+
+##############################################
+
+docker-compose exec php php artisan tinker
+
+#################################################
+// user1
+$user = App\Models\Usuario::where('username', 'user1')->first();
+$user->contrasena = Hash::make('user1.pa55');
+$user->save();
+
+// user2
+$user = App\Models\Usuario::where('username', 'user2')->first();
+$user->contrasena = Hash::make('user2.pa55');
+$user->save();
+
+// user6
+$user = App\Models\Usuario::where('username', 'user6')->first();
+$user->contrasena = Hash::make('user6.pa55');
+$user->save();
+
+// user7
+$user = App\Models\Usuario::where('username', 'user7')->first();
+$user->contrasena = Hash::make('user7.pa55');
+$user->save();
+
+// user21
+$user = App\Models\Usuario::where('username', 'user21')->first();
+$user->contrasena = Hash::make('user21.pa55');
+$user->save();
+
+// user22
+$user = App\Models\Usuario::where('username', 'user22')->first();
+$user->contrasena = Hash::make('user22.pa55');
+$user->save();
+
+// user641
+$user = App\Models\Usuario::where('username', 'user641')->first();
+$user->contrasena = Hash::make('user641.pa55');
+$user->save();
+
+// user642
+$user = App\Models\Usuario::where('username', 'user642')->first();
+$user->contrasena = Hash::make('user642.pa55');
+$user->save();
+
+// user921
+$user = App\Models\Usuario::where('username', 'user921')->first();
+$user->contrasena = Hash::make('user921.pa55');
+$user->save();
+
+// user922
+$user = App\Models\Usuario::where('username', 'user922')->first();
+$user->contrasena = Hash::make('user922.pa55');
+$user->save();
+
+
+exit
+
+###########################################################################
+
+docker-compose exec -u root php sh
+
+#############################################################################
+
+# Crear las carpetas necesarias
+mkdir -p /var/www/html/storage/framework/cache
+mkdir -p /var/www/html/storage/framework/sessions
+mkdir -p /var/www/html/storage/framework/views
+mkdir -p /var/www/html/storage/logs
+mkdir -p /var/www/html/bootstrap/cache
+
+# Dar permisos
+chmod -R 775 /var/www/html/storage
+chmod -R 775 /var/www/html/bootstrap/cache
+chown -R www-data:www-data /var/www/html/storage
+chown -R www-data:www-data /var/www/html/bootstrap/cache
+
+
+# Salir
+exit
+
+################################################################################
+
+docker-compose exec -u root php sh -c "chown -R laravel:laravel /var/www/html/storage /var/www/html/bootstrap/cache && chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache"
+
+docker-compose exec php php artisan view:clear
+docker-compose exec php php artisan config:clear
+docker-compose exec php php artisan cache:clear
+docker-compose exec php php artisan tinker --execute="echo 'Funciona!';"
