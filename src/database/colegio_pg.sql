@@ -64,7 +64,7 @@ CREATE TABLE IF NOT EXISTS Persona (
     direccion VARCHAR(200),
     telefono VARCHAR(15),
     fecha_nac DATE NOT NULL,
-    genero genero_enum NOT NULL,
+    genero genero_enum NULL,
     estado SMALLINT NOT NULL DEFAULT 1,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
