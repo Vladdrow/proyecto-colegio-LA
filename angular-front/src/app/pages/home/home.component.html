@@ -1,0 +1,77 @@
+<div class="bg-pattern"></div>
+
+<div class="container">
+    <!-- Navbar -->
+    <nav>
+        <div class="logo">
+            <div class="logo-icon">🎓</div>
+            <div class="logo-text">
+                Colegio Los Angeles <span>| Gestión Escolar</span>
+            </div>
+        </div>
+        <a routerLink="/login" class="btn btn-primary">
+            Iniciar Sesión
+        </a>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="badge">
+            <span class="badge-dot"></span>
+            Plataforma de Gestión Educativa
+        </div>
+
+        <h1>
+            Sistema de Gestión<br>
+            <span class="highlight">Escolar Integral</span>
+        </h1>
+
+        <p class="subtitle">
+            Administra alumnos, profesores, horarios, calificaciones y toda la gestión académica 
+            del Colegio "Los Ángeles" en un solo lugar.
+        </p>
+
+        <div class="hero-buttons">
+            <a routerLink="/login" class="btn btn-primary">
+                Ingresar al Sistema →
+            </a>
+            <a href="#modulos" class="btn btn-secondary">
+                Ver Módulos
+            </a>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features" id="modulos">
+        @for (feature of features; track feature.title) {
+            <div class="feature-card">
+                <div class="feature-icon" [class]="feature.color">
+                    {{ feature.icon }}
+                </div>
+                <h3>{{ feature.title }}</h3>
+                <p>{{ feature.description }}</p>
+            </div>
+        }
+    </section>
+
+    <!-- Roles Section -->
+    <section class="roles">
+        <h2>Acceso por Roles</h2>
+        <p class="roles-subtitle">Cada usuario tiene acceso a las herramientas que necesita</p>
+
+        <div class="roles-grid">
+            @for (role of roles; track role.title) {
+                <div class="role-item">
+                    <div class="role-emoji">{{ role.emoji }}</div>
+                    <h4>{{ role.title }}</h4>
+                    <p>{{ role.description }}</p>
+                </div>
+            }
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <p>© {{ currentYear }} Colegio "Los Ángeles" — Sistema de Gestión Escolar</p>
+    </footer>
+</div>

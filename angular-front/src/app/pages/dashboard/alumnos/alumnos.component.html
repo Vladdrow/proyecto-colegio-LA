@@ -1,0 +1,213 @@
+<div class="alumnos-container">
+  
+  <!-- HEADER -->
+  <div class="page-header">
+    <h1>Listado de Alumnos</h1>
+    <div class="header-actions">
+      @if (canCreate()) {
+        <button (click)="openModal()" class="btn-primary">
+          + Nuevo Alumno
+        </button>
+      }
+    </div>
+  </div>
+  
+  <!-- BARRA DE BÚSQUEDA -->
+  <div class="search-bar">
+    <div class="search-box">
+      <span class="search-icon">🔍</span>
+      <input 
+        type="text" 
+        [ngModel]="searchTerm()" 
+        (ngModelChange)="onSearchChange($event)"
+        placeholder="Buscar por CI, nombre, apellido, RUDE, direccion, telefono..."
+        class="search-input"
+      />
+      @if (searchTerm()) {
+        <button class="clear-search" (click)="onSearchChange('')">✕</button>
+      }
+    </div>
+    
+    <button class="btn-filters" (click)="toggleFilters()">
+      {{ showFilters() ? '▲ Ocultar filtros' : '▼ Mostrar filtros' }}
+    </button>
+  </div>
+  
+  <!-- FILTROS AVANZADOS -->
+  @if (showFilters()) {
+    <div class="filters-panel">
+      <div class="filter-group">
+        <label>Género</label>
+        <select [ngModel]="filterGenero()" (ngModelChange)="onGeneroChange($event)" class="filter-select">
+          <option value="">Todos</option>
+          <option value="M">Masculino</option>
+          <option value="F">Femenino</option>
+        </select>
+      </div>
+      
+      <div class="filter-group">
+        <label>Estado</label>
+        <select [ngModel]="filterEstado()" (ngModelChange)="onEstadoChange($event)" class="filter-select">
+          <option value="">Todos</option>
+          <option value="1">Activo</option>
+          <option value="0">Inactivo</option>
+        </select>
+      </div>
+      
+      @if (searchTerm() || filterGenero() || filterEstado()) {
+        <button class="btn-clear-filters" (click)="limpiarFiltros()">
+          Limpiar filtros
+        </button>
+      }
+    </div>
+  }
+  
+  <!-- ESTADOS DE CARGA Y ERROR -->
+  @if (isLoading()) {
+    <div class="loading-state">
+      <div class="spinner"></div>
+      <p>Cargando alumnos...</p>
+    </div>
+  }
+  
+  @else if (errorMessage()) {
+    <div class="error-state">
+      <p>{{ errorMessage() }}</p>
+      <button (click)="loadAlumnos()" class="btn-retry">Reintentar</button>
+    </div>
+  }
+  
+  @else {
+    <!-- TABLA DE ALUMNOS -->
+    <div class="table-responsive">
+      <table class="alumnos-table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>CI</th>
+            <th>Alumno</th>
+            <th>Fecha Nac.</th>
+            <th>Género</th>
+            @if (canEdit() || canDelete()) {
+              <th>Acciones</th>
+            }
+          </tr>
+        </thead>
+        <tbody>
+          @if (alumnos().length === 0) {
+            <tr>
+              <td colspan="6" class="empty-row">No se encontraron alumnos</td>
+            </tr>
+          }
+          @for (alumno of alumnos(); track alumno.id_estudiante; let i = $index) {
+            <tr>
+              <td>{{ (currentPage() - 1) * perPage() + i + 1 }}</td>
+              <td>
+                {{ getCi(alumno) }}
+                @if (getEstado(alumno) === 'Activo') {
+                  <span class="status-badge active">Activo</span>
+                } @else {
+                  <span class="status-badge inactive">Inactivo</span>
+                }
+              </td>
+              <td class="alumno-cell">{{ getNombreCompleto(alumno) }}</td>
+              <td>{{ getFechaNac(alumno) }}</td>
+              <td class="genero-cell">
+                @if (getGenero(alumno) === 'M') {
+                  <span>👨 Masculino</span>
+                } @else if (getGenero(alumno) === 'F') {
+                  <span>👩 Femenino</span>
+                } @else {
+                  <span>👤 Otro</span>
+                }
+              </td>
+              @if (canEdit() || canDelete()) {
+                <td class="actions">
+                  @if (canEdit()) {
+                    <button (click)="openEditModal(alumno)" class="btn-edit" title="Editar alumno">✏️</button>
+                  }
+                  @if (canDelete()) {
+                    @if (getEstado(alumno) === 'Activo') {
+                      <button (click)="confirmDelete(alumno)" class="btn-delete" title="Desactivar alumno">🗑️</button>
+                    } @else {
+                      <button (click)="confirmReactivate(alumno)" class="btn-reactivate" title="Reactivar alumno">🔄</button>
+                    }
+                  }
+                </td>
+              }
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+    
+    <!-- PAGINACIÓN -->
+    @if (totalPages() > 1) {
+      <div class="pagination">
+        <button (click)="goToPage(currentPage() - 1)" [disabled]="currentPage() === 1" class="page-btn">Anterior</button>
+        @for (page of getPaginationPages(); track page) {
+          <button (click)="goToPage(page)" [class.active]="page === currentPage()" class="page-btn">{{ page }}</button>
+        }
+        <button (click)="goToPage(currentPage() + 1)" [disabled]="currentPage() === totalPages()" class="page-btn">Siguiente</button>
+      </div>
+    }
+    
+    <!-- INFORMACIÓN DE REGISTROS -->
+    <div class="table-info">
+      Mostrando {{ (currentPage() - 1) * perPage() + 1 }} - {{ min(currentPage() * perPage(), totalItems()) }} de {{ totalItems() }} registros
+    </div>
+  }
+  
+  <!-- MODAL: NUEVO ALUMNO -->
+  @if (showModal()) {
+    <app-alumno-form 
+      [modoEdicion]="false"
+      (close)="closeModal()" 
+      (alumnoGuardado)="onAlumnoCreado()">
+    </app-alumno-form>
+  }
+  
+  <!-- MODAL: EDITAR ALUMNO -->
+  @if (showEditModal()) {
+    <app-alumno-form 
+      [modoEdicion]="true"
+      [alumnoData]="alumnoToEdit()"
+      (close)="closeEditModal()" 
+      (alumnoGuardado)="onAlumnoActualizado()">
+    </app-alumno-form>
+  }
+  
+  <!-- MODAL: CONFIRMAR DESACTIVACIÓN -->
+  @if (showDeleteModal()) {
+    <div class="modal-overlay" (click)="closeDeleteModal()">
+      <div class="modal-confirm" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+          <h3>{{ alumnoToDelete()?.esActivo ? 'Confirmar desactivación' : 'Confirmar reactivación' }}</h3>
+          <button class="btn-close" (click)="closeDeleteModal()">✕</button>
+        </div>
+        <div class="modal-body">
+          <div class="confirm-icon">⚠️</div>
+          @if (alumnoToDelete()?.esActivo) {
+            <p>¿Estás seguro de que deseas <strong>desactivar</strong> a <strong>{{ alumnoToDelete()?.nombre }}</strong>?</p>
+            <p class="warning-text">El alumno quedará inactivo en el sistema.</p>
+          } @else {
+            <p>¿Estás seguro de que deseas <strong>reactivar</strong> a <strong>{{ alumnoToDelete()?.nombre }}</strong>?</p>
+            <p class="success-text">El alumno volverá a estar activo en el sistema.</p>
+          }
+        </div>
+        <div class="modal-footer">
+          <button class="btn-cancel" (click)="closeDeleteModal()">Cancelar</button>
+          <button class="btn-confirm" (click)="executeStatusChange()" [disabled]="isDeleting()" [class.btn-desactivar]="alumnoToDelete()?.esActivo" [class.btn-reactivar]="!alumnoToDelete()?.esActivo">
+            @if (isDeleting()) {
+              <span class="spinner-small"></span>
+              Procesando...
+            } @else {
+              <span>{{ alumnoToDelete()?.esActivo ? '🗑️ Desactivar' : '🔄 Reactivar' }} </span>
+            }
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+  
+</div>

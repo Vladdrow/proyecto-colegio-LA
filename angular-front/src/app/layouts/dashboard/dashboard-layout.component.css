@@ -1,0 +1,534 @@
+/* ============================================ */
+/* 1. CONTENEDOR PRINCIPAL */
+/* ============================================ */
+.dashboard-container {
+    display: flex;
+    min-height: 100vh;
+    background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 40%, #1e40af 100%);
+}
+
+/* ============================================ */
+/* 2. SIDEBAR - ESTADO NORMAL (EXPANDIDO) */
+/* ============================================ */
+.sidebar {
+    width: 280px;
+    background: rgba(15, 23, 42, 0.95);
+    backdrop-filter: blur(10px);
+    border-right: 1px solid rgba(255, 255, 255, 0.08);
+    display: flex;
+    flex-direction: column;
+    transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: fixed;
+    height: 100vh;
+    left: 0;
+    top: 0;
+    z-index: 100;
+    overflow: hidden;
+}
+
+/* Sidebar - ESTADO COLAPSADO */
+.dashboard-container.collapsed .sidebar {
+    width: 80px;
+}
+
+/* ============================================ */
+/* 3. HEADER DEL SIDEBAR */
+/* ============================================ */
+.sidebar-header {
+    padding: 1.5rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    min-height: 80px;
+}
+
+/* Ajustes cuando está colapsado */
+.dashboard-container.collapsed .sidebar-header {
+    justify-content: center;
+}
+
+/* ============================================ */
+/* 4. LOGO Y BOTÓN DE EXPANSIÓN */
+/* ============================================ */
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    overflow: hidden;
+    transition: all 0.3s;
+}
+
+/* Botón del logo para expandir (cuando está colapsado) */
+.logo-expand-btn {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s;
+    border-radius: 12px;
+}
+
+.logo-expand-btn:hover {
+    transform: scale(1.05);
+}
+
+.logo-expand-btn .logo-icon {
+    margin: 0;
+    box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+    transition: all 0.3s;
+}
+
+.logo-expand-btn:hover .logo-icon {
+    box-shadow: 0 6px 20px rgba(59, 130, 246, 0.5);
+    transform: rotate(5deg);
+}
+
+/* Centrar logo cuando está colapsado */
+.dashboard-container.collapsed .logo-expand-btn {
+    margin: 0 auto;
+}
+
+/* Icono del logo */
+.logo-icon {
+    width: 40px;
+    height: 40px;
+    background: linear-gradient(135deg, #3b82f6, #2563eb);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
+    flex-shrink: 0;
+    box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+}
+
+/* Texto del logo */
+.logo-text {
+    font-weight: 700;
+    font-size: 1rem;
+    line-height: 1.3;
+    color: white;
+    white-space: nowrap;
+    transition: opacity 0.3s, transform 0.3s;
+}
+
+.logo-text span {
+    color: #93c5fd;
+    font-weight: 400;
+    font-size: 0.85rem;
+}
+
+/* Ocultar texto cuando está colapsado */
+.dashboard-container.collapsed .logo-text {
+    opacity: 0;
+    transform: translateX(-20px);
+    pointer-events: none;
+    width: 0;
+    overflow: hidden;
+}
+
+/* ============================================ */
+/* 5. BOTÓN TOGGLE (FLECHA PARA COLAPSAR) */
+/* ============================================ */
+.toggle-btn {
+    background: rgba(59, 130, 246, 0.15);
+    border: 1px solid rgba(59, 130, 246, 0.25);
+    color: white;
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    transition: all 0.2s;
+    flex-shrink: 0;
+}
+
+.toggle-btn:hover {
+    background: rgba(59, 130, 246, 0.3);
+    transform: scale(1.05);
+}
+
+/* Ocultar botón toggle cuando está colapsado (solo visible en expandido) */
+.dashboard-container.collapsed .toggle-btn {
+    display: none;
+}
+
+/* ============================================ */
+/* 6. NAVEGACIÓN DEL SIDEBAR - ACORDEÓN */
+/* ============================================ */
+.sidebar-nav {
+    flex: 1;
+    padding: 1rem 0.75rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+/* Grupo del menú */
+.menu-group {
+    margin-bottom: 0.25rem;
+}
+
+/* Título de sección */
+.menu-group-title {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.625rem 0.875rem;
+    margin-bottom: 0.25rem;
+    color: #94a3b8;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    border-radius: 10px;
+    transition: all 0.2s;
+}
+
+.menu-group-title.clickable {
+    cursor: pointer;
+}
+
+.menu-group-title.clickable:hover {
+    background: rgba(59, 130, 246, 0.12);
+    color: #cbd5e1;
+}
+
+/* Modo colapsado (sidebar angosto) */
+.dashboard-container.collapsed .menu-group-title {
+    justify-content: center;
+    padding: 0.625rem;
+}
+
+.group-icon {
+    font-size: 1rem;
+    min-width: 24px;
+    text-align: center;
+}
+
+.group-label {
+    flex: 1;
+    white-space: nowrap;
+    font-size: 0.7rem;
+}
+
+.group-arrow {
+    font-size: 0.65rem;
+    transition: transform 0.2s ease;
+}
+
+.dashboard-container.collapsed .group-label,
+.dashboard-container.collapsed .group-arrow {
+    display: none;
+}
+
+/* Contenedor de items del grupo (con animación) */
+.menu-group-items {
+    display: flex;
+    flex-direction: column;
+    gap: 0.125rem;
+    margin-left: 0.5rem;
+    overflow: hidden;
+    max-height: 0;
+    opacity: 0;
+    transition: max-height 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+                opacity 0.2s ease,
+                margin 0.2s ease;
+}
+
+.menu-group-items.expanded {
+    max-height: 500px;
+    opacity: 1;
+    margin-bottom: 0.5rem;
+}
+
+.dashboard-container.collapsed .menu-group-items {
+    display: none;
+}
+
+/* Items de navegación */
+.nav-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.625rem 0.875rem;
+    color: #cbd5e1;
+    text-decoration: none;
+    border-radius: 10px;
+    transition: all 0.2s;
+    font-weight: 500;
+    font-size: 0.85rem;
+    cursor: pointer;
+    white-space: nowrap;
+    position: relative;
+}
+
+/* Módulo único (sin título de sección) */
+.nav-item.single-module {
+    margin-left: 0;
+}
+
+/* Ajuste cuando está colapsado */
+.dashboard-container.collapsed .nav-item {
+    justify-content: center;
+    padding: 0.625rem;
+}
+
+/* Hover */
+.nav-item:hover {
+    background: rgba(59, 130, 246, 0.12);
+    color: white;
+}
+
+/* Activo */
+.nav-item.active {
+    background: linear-gradient(135deg, #3b82f6, #2563eb);
+    color: white;
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.25);
+}
+
+/* Indicador de item activo (barra izquierda) */
+.nav-item.active::before {
+    content: '';
+    position: absolute;
+    left: -0.75rem;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 3px;
+    height: 20px;
+    background: #60a5fa;
+    border-radius: 0 3px 3px 0;
+}
+
+.dashboard-container.collapsed .nav-item.active::before {
+    left: -0.5rem;
+}
+
+/* Iconos */
+.nav-icon {
+    font-size: 1.1rem;
+    min-width: 24px;
+    text-align: center;
+    flex-shrink: 0;
+}
+
+/* Texto */
+.nav-label {
+    transition: opacity 0.2s;
+}
+
+.dashboard-container.collapsed .nav-label {
+    display: none;
+}
+
+/* ============================================ */
+/* 7. FOOTER DEL SIDEBAR (BOTÓN CERRAR SESIÓN) */
+/* ============================================ */
+.sidebar-footer {
+    padding: 1rem 0.75rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    margin-top: auto;
+}
+
+.logout-btn {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.625rem 0.875rem;
+    background: rgba(239, 68, 68, 0.1);
+    border: 1px solid rgba(239, 68, 68, 0.2);
+    color: #fca5a5;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-weight: 500;
+    font-size: 0.85rem;
+    white-space: nowrap;
+}
+
+.logout-btn:hover:not(:disabled) {
+    background: rgba(239, 68, 68, 0.2);
+    border-color: rgba(239, 68, 68, 0.4);
+    color: #fecaca;
+}
+
+/* Estado deshabilitado del botón */
+.logout-btn:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
+.dashboard-container.collapsed .logout-btn {
+    justify-content: center;
+    padding: 0.625rem;
+}
+
+.dashboard-container.collapsed .logout-btn .nav-label {
+    display: none;
+}
+
+/* Spinner blanco para el botón de logout */
+.spinner-white {
+    width: 16px;
+    height: 16px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-top-color: white;
+    border-radius: 50%;
+    display: inline-block;
+    animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* ============================================ */
+/* 8. CONTENIDO PRINCIPAL */
+/* ============================================ */
+.main-content {
+    flex: 1;
+    margin-left: 280px;
+    padding: 1.5rem;
+    transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    min-height: 100vh;
+}
+
+/* Ajuste cuando sidebar está colapsado */
+.dashboard-container.collapsed .main-content {
+    margin-left: 80px;
+}
+
+/* ============================================ */
+/* 9. SCROLLBAR PERSONALIZADA */
+/* ============================================ */
+::-webkit-scrollbar {
+    width: 4px;
+    height: 4px;
+}
+
+::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: rgba(59, 130, 246, 0.4);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: rgba(59, 130, 246, 0.6);
+}
+
+/* ============================================ */
+/* 10. BOTÓN FLOTANTE PARA MÓVIL */
+/* ============================================ */
+.mobile-menu-btn {
+    display: none;
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 56px;
+    height: 56px;
+    border-radius: 28px;
+    background: linear-gradient(135deg, #3b82f6, #2563eb);
+    border: none;
+    color: white;
+    font-size: 1.5rem;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4);
+    z-index: 1000;
+    transition: all 0.2s;
+    align-items: center;
+    justify-content: center;
+}
+
+.mobile-menu-btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 6px 20px rgba(59, 130, 246, 0.5);
+}
+
+/* ============================================ */
+/* 11. OVERLAY PARA MÓVIL */
+/* ============================================ */
+.sidebar-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(2px);
+    z-index: 98;
+    cursor: pointer;
+}
+
+/* ============================================ */
+/* 12. RESPONSIVE - MÓVIL (≤ 768px) */
+/* ============================================ */
+@media (max-width: 768px) {
+    .toggle-btn {
+        display: flex !important;
+    }
+
+    .mobile-menu-btn {
+        display: flex;
+    }
+
+    .sidebar {
+        transform: translateX(-100%);
+        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        z-index: 99;
+    }
+
+    .dashboard-container.mobile-open .sidebar {
+        transform: translateX(0);
+        box-shadow: 2px 0 10px rgba(0, 0, 0, 0.3);
+    }
+
+    .dashboard-container.mobile-open .sidebar-overlay {
+        display: block;
+    }
+
+    .main-content {
+        margin-left: 0 !important;
+    }
+
+    .dashboard-container.mobile-open .toggle-btn {
+        display: flex;
+    }
+}
+
+/* ============================================ */
+/* 13. RESPONSIVE - TABLET (769px - 1024px) */
+/* ============================================ */
+@media (min-width: 769px) and (max-width: 1024px) {
+    .sidebar {
+        width: 240px;
+    }
+
+    .dashboard-container.collapsed .sidebar {
+        width: 70px;
+    }
+
+    .main-content {
+        margin-left: 240px;
+    }
+
+    .dashboard-container.collapsed .main-content {
+        margin-left: 70px;
+    }
+}

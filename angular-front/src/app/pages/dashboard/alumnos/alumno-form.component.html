@@ -1,0 +1,115 @@
+<div class="modal-overlay" (click)="closeModal()">
+  <div class="modal-container" (click)="$event.stopPropagation()">
+    
+    <!-- Header del modal -->
+    <div class="modal-header">
+      <h2>{{ modoEdicion() ? 'Editar Alumno' : 'Nuevo Alumno' }}</h2>
+      <button class="btn-close" (click)="closeModal()">✕</button>
+    </div>
+    
+    <!-- Mensajes -->
+    @if (successMessage) {
+      <div class="alert success">
+        {{ successMessage }}
+      </div>
+    }
+    
+    @if (errorMessage) {
+      <div class="alert error">
+        {{ errorMessage }}
+      </div>
+    }
+    
+    <!-- Formulario -->
+    <form [formGroup]="alumnoForm" (ngSubmit)="onSubmit()" class="alumno-form">
+      
+      <div class="form-row">
+        <div class="form-group">
+          <label for="ci">CI *</label>
+          <input type="text" id="ci" formControlName="ci" placeholder="12345678" autocomplete="off">
+          @if (ci?.invalid && ci?.touched) {
+            <span class="error-text">Cédula de identidad requerida</span>
+          }
+        </div>
+        
+        <div class="form-group">
+          <label for="rude">RUDE *</label>
+          <input type="text" id="rude" formControlName="rude" placeholder="RUD2025001" autocomplete="off">
+          @if (rude?.invalid && rude?.touched) {
+            <span class="error-text">RUDE requerido</span>
+          }
+        </div>
+      </div>
+      
+      <div class="form-row">
+        <div class="form-group">
+          <label for="nombres">Nombres *</label>
+          <input type="text" id="nombres" formControlName="nombres" placeholder="Carlos" autocomplete="off">
+          @if (nombres?.invalid && nombres?.touched) {
+            <span class="error-text">Nombres requeridos</span>
+          }
+        </div>
+        
+        <div class="form-group">
+          <label for="apellidos">Apellidos *</label>
+          <input type="text" id="apellidos" formControlName="apellidos" placeholder="López" autocomplete="off">
+          @if (apellidos?.invalid && apellidos?.touched) {
+            <span class="error-text">Apellidos requeridos</span>
+          }
+        </div>
+      </div>
+      
+      <div class="form-row">
+        <div class="form-group">
+          <label for="fecha_nac">Fecha de Nacimiento *</label>
+          <input type="date" id="fecha_nac" formControlName="fecha_nac">
+          @if (fecha_nac?.invalid && fecha_nac?.touched) {
+            <span class="error-text">Fecha de nacimiento requerida</span>
+          }
+        </div>
+        
+        <div class="form-group">
+          <label for="genero">Género *</label>
+          <select id="genero" formControlName="genero">
+            <option value="">Seleccione...</option>
+            @for (g of generos; track g.value) {
+              <option [value]="g.value">{{ g.label }}</option>
+            }
+          </select>
+          @if (genero?.invalid && genero?.touched) {
+            <span class="error-text">Género requerido</span>
+          }
+        </div>
+      </div>
+      
+      <div class="form-row">
+        <div class="form-group">
+          <label for="direccion">Dirección</label>
+          <input type="text" id="direccion" formControlName="direccion" placeholder="Calle Principal 123" autocomplete="off">
+        </div>
+        
+        <div class="form-group">
+          <label for="telefono">Teléfono</label>
+          <input type="tel" id="telefono" formControlName="telefono" placeholder="77712345" autocomplete="off">
+          @if (telefono?.invalid && telefono?.touched) {
+            <span class="error-text">Ingrese un número válido (7-15 dígitos)</span>
+          }
+        </div>
+      </div>
+      
+      <div class="form-buttons">
+        <button type="button" class="btn-cancel" (click)="closeModal()">
+            Cancelar
+        </button>
+        <button type="submit" class="btn-submit" [disabled]="alumnoForm.invalid || isLoading">
+            @if (isLoading) {
+            <span class="spinner-small"></span>
+            {{ modoEdicion() ? 'Guardando...' : 'Guardando...' }}
+            } @else {
+            {{ modoEdicion() ? 'Actualizar Alumno' : 'Guardar Alumno' }}
+            }
+        </button>
+        </div>
+    </form>
+  </div>
+</div>

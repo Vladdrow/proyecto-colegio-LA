@@ -1,0 +1,42 @@
+<div class="dashboard-main">
+    <!-- Header -->
+    <div class="page-header">
+        <h1>Panel principal</h1>
+        <p class="welcome-text">Bienvenido, <b>{{ userLogged() }}</b></p>
+    </div>
+
+    <!-- Cards Grid -->
+    <div class="cards-grid">
+        @for (card of cards; track card.title) {
+            <div class="card" [class]="'card-' + card.color">
+                <div class="card-icon">{{ card.icon }}</div>
+                <h3>{{ card.title }}</h3>
+                <p>{{ card.description }}</p>
+                <a [routerLink]="card.route" class="card-btn">
+                    {{ card.buttonText }} →
+                </a>
+            </div>
+        }
+    </div>
+
+    <!-- Configuración Section -->
+    <div class="config-section">
+        <div class="config-header">
+            <h2>Configuración del sistema</h2>
+            <p class="config-description">
+                En esta sección puedes configurar las opciones del sistema.
+            </p>
+        </div>
+        
+        <div class="config-content">
+            <div class="config-alert">
+                <span class="alert-icon">⚠️</span>
+                <p>Aún no has configurado los datos del sistema.</p>
+            </div>
+            
+            <a routerLink="/dashboard/configuraciones" class="config-btn">
+                Ir a Configuración →
+            </a>
+        </div>
+    </div>
+</div>

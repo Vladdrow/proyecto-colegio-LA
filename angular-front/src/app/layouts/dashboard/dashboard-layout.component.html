@@ -1,0 +1,140 @@
+<div 
+    class="dashboard-container" 
+    [class.collapsed]="sidebarCollapsed() && !isMobile()"
+    [class.mobile-open]="mobileMenuOpen() && isMobile()">
+    
+    <div class="sidebar-overlay" (click)="closeMobileMenu()"></div>
+    
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            @if (!isMobile()) {
+                @if (sidebarCollapsed()) {
+                    <button class="logo-expand-btn" (click)="expandSidebar()" title="Expandir menú">
+                        <div class="logo-icon">🎓</div>
+                    </button>
+                } @else {
+                    <div class="logo">
+                        <div class="logo-icon">🎓</div>
+                        <div class="logo-text">
+                            Colegio<br>
+                            <span>Los Ángeles</span>
+                        </div>
+                    </div>
+                }
+            } @else {
+                <div class="logo">
+                    <div class="logo-icon">🎓</div>
+                    <div class="logo-text">
+                        Colegio<br>
+                        <span>Los Ángeles</span>
+                    </div>
+                </div>
+            }
+            
+            @if ((!sidebarCollapsed() && !isMobile()) || isMobile()) {
+                <button class="toggle-btn" (click)="toggleSidebar()" [title]="isMobile() ? 'Cerrar menú' : 'Colapsar'">
+                    @if (isMobile()) { ✕ } @else { ← }
+                </button>
+            }
+        </div>
+
+        <nav class="sidebar-nav">
+            @for (section of visibleSections(); track section.nombre) {
+                @if (section.cantidadModulos === 1) {
+                    <!-- Mostrar módulo único directamente (sin título de sección) -->
+                    @for (moduloKey of section.modulosVisibles; track moduloKey) {
+                        @let modulo = getModuleData(moduloKey);
+                        @if (modulo) {
+                            <a 
+                                [routerLink]="modulo.route"
+                                routerLinkActive="active"
+                                class="nav-item single-module"
+                                [title]="(sidebarCollapsed() && !isMobile()) ? modulo.nombre : ''"
+                                (click)="closeMobileMenu()">
+                                <span class="nav-icon">{{ modulo.icon }}</span>
+                                @if (!sidebarCollapsed() || isMobile()) {
+                                    <span class="nav-label">{{ modulo.nombre }}</span>
+                                }
+                            </a>
+                        }
+                    }
+                } @else {
+                    <!-- Mostrar sección con título (2+ módulos) -->
+                    <div class="menu-group">
+                        <div 
+                            class="menu-group-title"
+                            [class.clickable]="!sidebarCollapsed() || isMobile()"
+                            (click)="toggleSection(section.nombre)">
+                            @if (!sidebarCollapsed() || isMobile()) {
+                                <span class="group-icon">{{ section.icon }}</span>
+                                <span class="group-label">{{ section.nombre }}</span>
+                                <span class="group-arrow">
+                                    {{ isSectionExpanded(section.nombre) ? '▼' : '▶' }}
+                                </span>
+                            } @else {
+                                <span class="group-icon" [title]="section.nombre">{{ section.icon }}</span>
+                            }
+                        </div>
+                        
+                        @if (isSectionExpanded(section.nombre) && (!sidebarCollapsed() || isMobile())) {
+                            <div class="menu-group-items expanded">
+                                @for (moduloKey of section.modulosVisibles; track moduloKey) {
+                                    @let modulo = getModuleData(moduloKey);
+                                    @if (modulo) {
+                                        <a 
+                                            [routerLink]="modulo.route"
+                                            routerLinkActive="active"
+                                            class="nav-item"
+                                            [title]="(sidebarCollapsed() && !isMobile()) ? modulo.nombre : ''"
+                                            (click)="closeMobileMenu()">
+                                            <span class="nav-icon">{{ modulo.icon }}</span>
+                                            @if (!sidebarCollapsed() || isMobile()) {
+                                                <span class="nav-label">{{ modulo.nombre }}</span>
+                                            }
+                                        </a>
+                                    }
+                                }
+                            </div>
+                        } @else if (!sidebarCollapsed() || isMobile()) {
+                            <!-- Contenedor vacío pero con la clase para que la animación funcione -->
+                            <div class="menu-group-items">
+                                <!-- vacío, pero la transición existe -->
+                            </div>
+                        }
+                    </div>
+                }
+            }
+        </nav>
+
+        <div class="sidebar-footer">
+            <button 
+                class="logout-btn" 
+                (click)="logout()" 
+                [disabled]="isLoggingOut()"
+                [title]="(sidebarCollapsed() && !isMobile()) ? 'Cerrar Sesión' : ''">
+                
+                @if (isLoggingOut()) {
+                    <span class="spinner-white"></span>
+                    @if (!sidebarCollapsed() || isMobile()) {
+                        <span class="nav-label">Cerrando...</span>
+                    }
+                } @else {
+                    <span class="nav-icon">🚪</span>
+                    @if (!sidebarCollapsed() || isMobile()) {
+                        <span class="nav-label">Cerrar Sesión</span>
+                    }
+                }
+            </button>
+        </div>
+    </aside>
+
+    <main class="main-content">
+        <router-outlet></router-outlet>
+    </main>
+
+    @if (isMobile() && !mobileMenuOpen()) {
+        <button class="mobile-menu-btn" (click)="toggleSidebar()" title="Abrir menú">
+            ☰
+        </button>
+    }
+</div>
